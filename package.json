@@ -1,0 +1,24 @@
+{
+  "name": "liquid-args",
+  "version": "0.1.0",
+  "description": "A parser for custom tag arguments in liquidjs. Meant to mirror Nunjucks.",
+  "main": "parser.js",
+  "scripts": {
+    "build": "node build",
+    "test": "node test",
+    "prepublishOnly": "node test"
+  },
+  "keywords": [
+    "liquid",
+    "pegjs",
+    "parser",
+    "tags"
+  ],
+  "author": "Dylan Awalt-Conley",
+  "license": "ISC",
+  "devDependencies": {
+    "eslint": "^7.2.0",
+    "liquidjs": "^9.12.0",
+    "pegjs": "^0.10.0"
+  }
+}
