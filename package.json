@@ -2,7 +2,7 @@
   "name": "liquid-args",
   "version": "0.1.0",
   "description": "A parser for custom tag arguments in liquidjs. Meant to mirror Nunjucks.",
-  "main": "parser.js",
+  "main": "index.js",
   "scripts": {
     "build": "node build",
     "test": "node test",

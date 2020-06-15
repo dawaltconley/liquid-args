@@ -4,7 +4,7 @@ const path = require('path');
 const p = (...args) => path.join(__dirname, ...args);
 
 require(p('build.js'));
-const args = require(p('parser.js'));
+const args = require(p('index.js'));
 
 const engine = new Liquid();
 
@@ -68,26 +68,9 @@ const tests = [
     },
 ];
 
-engine.registerTag('test', {
-    parse: function (tagToken) {
-        this.args = args.parse(tagToken.args);
-    },
-    render: function (scope) {
-        const evalValue = arg => this.liquid.evalValueSync.call(this.liquid, arg, scope);
-        const args = this.args.map(function evalArg(arg) {
-            if (arg.__keywords === true) {
-                delete arg.__keywords;
-                for (const key in arg) {
-                    arg[key] = evalArg(arg[key]);
-                }
-                arg.__keywords = true;
-                return arg;
-            }
-            return evalValue(arg);
-        });
-        return JSON.stringify(args);
-    }
-});
+engine.registerTag('test', args(function () {
+    return JSON.stringify(this.args);
+}));
 
 for (const { input, output } of tests) {
     for (const i of input) {
