@@ -68,7 +68,7 @@ const tests = [
     },
 ];
 
-engine.registerTag('test', args(function () {
+engine.registerTag('test', args.shortcode(function () {
     return JSON.stringify(this.args);
 }));
 

@@ -19,9 +19,16 @@ const parse = parser.parse.bind(parser);
 
 const evaluate = (args, evalFunc) => {
     return args.map(a => evalArg(a, evalFunc));
-}
+};
 
-module.exports = function (render) {
+module.exports = function (args, evalFunc) {
+    let parsed = parse(args);
+    if (evalFunc)
+        parsed = evaluate(args, evalFunc);
+    return parsed;
+};
+
+module.exports.shortcode = function (render) {
     return {
         parse: function (tagToken) {
             this.args = parse(tagToken.args);
@@ -32,8 +39,5 @@ module.exports = function (render) {
             return render.call(this, ctx, emitter, hash);
         }
     }
-}
+};
 
-module.exports.parser = parse;
-
-module.exports.eval = evaluate;
