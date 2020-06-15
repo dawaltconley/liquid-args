@@ -6,8 +6,6 @@ const p = (...args) => path.join(__dirname, ...args);
 require(p('build.js'));
 const parser = require(p('index.js'));
 
-const engine = new Liquid();
-
 const tests = [
     {
         input: [
@@ -68,15 +66,35 @@ const tests = [
     },
 ];
 
-engine.registerTag('test', parser.shortcode(function () {
-    return JSON.stringify(this.args);
-}));
-
-for (const { input, output } of tests) {
-    for (const i of input) {
-        const parse = engine.parseAndRenderSync.bind(engine, ...i);
-        assert.equal(parse(), output);
+const runTests = (name, tagConfig) => {
+    const engine = new Liquid();
+    engine.registerTag('test', tagConfig);
+    for (const { input, output } of tests) {
+        for (const i of input) {
+            const parse = engine.parseAndRenderSync.bind(engine, ...i);
+            try {
+                assert.equal(parse(), output);
+            } catch (e) {
+                console.error(`Error while testing ${name}`);
+                throw e;
+            }
+        }
     }
 }
+
+runTests('default', {
+    parse: function (tagToken) {
+        this.args = tagToken.args;
+    },
+    render: function (ctx) {
+        const evalValue = arg => this.liquid.evalValueSync.call(this.liquid, arg, ctx);
+        this.args = parser(this.args, evalValue);
+        return JSON.stringify(this.args);
+    }
+});
+
+runTests('shortcode', parser.shortcode(function () {
+    return JSON.stringify(this.args);
+}));
 
 console.log('All tests passed.');
