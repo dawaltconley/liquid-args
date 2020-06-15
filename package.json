@@ -3,6 +3,10 @@
   "version": "0.1.0",
   "description": "A parser for custom tag arguments in liquidjs. Meant to mirror Nunjucks.",
   "main": "index.js",
+  "files": [
+      "index.js",
+      "parser.js"
+  ],
   "scripts": {
     "build": "node build",
     "test": "node test",
