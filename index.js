@@ -4,7 +4,8 @@ const p = (...args) => path.join(__dirname, ...args);
 const parser = require(p('parser.js'));
 
 const parse = function (args, evalFunc) {
-    parser.eval = evalFunc.bind(this);
+    if (evalFunc)
+        parser.eval = evalFunc.bind(this);
     return parser.parse(args);
 }
 
