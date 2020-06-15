@@ -92,7 +92,7 @@ engine.registerTag('test', {
 for (const { input, output } of tests) {
     for (const i of input) {
         const parse = engine.parseAndRenderSync.bind(engine, ...i);
-        assert(parse(), output);
+        assert.equal(parse(), output);
     }
 }
 
