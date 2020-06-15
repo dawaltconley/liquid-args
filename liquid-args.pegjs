@@ -1,3 +1,7 @@
+{
+    var evaluate = this.eval || function (arg) { return arg; };
+}
+
 Args = a:Kwargs { return [a] }
     / a:Positional _ args:Args { return [a].concat(args) }
     / a:Positional { return [a] }
@@ -12,17 +16,14 @@ Keyword = key:VarName [=] value:Positional {
     return obj;
 }
 
-Positional = Number / String / Variable
+Positional = ( Number / String / Variable ) { return evaluate(text()); }
 
-Variable = ( VarName '.' Variable / VarName ) { return text(); }
+Variable = VarName '.' Variable / VarName
 
 VarName = [A-z0-9_\-]+ { return text() }
 
-String = (
-    '"' ( "\\"["\\] / [^"\n\\] )* '"' /
-    "'" ( "\\"['\\] / [^'\n\\] )* "'"
-) { return text(); }
+String = '"' ( "\\"["\\] / [^"\n\\] )* '"' / "'" ( "\\"['\\] / [^'\n\\] )* "'"
 
-Number = [0-9]+ '.'? [0-9]* { return text(); }
+Number = [0-9]+ '.'? [0-9]*
 
 _ = [,]?[ \t\n\r]+

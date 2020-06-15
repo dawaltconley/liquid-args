@@ -3,41 +3,22 @@ const p = (...args) => path.join(__dirname, ...args);
 
 const parser = require(p('parser.js'));
 
-function evalArg(arg, evalFunc) {
-    if (arg.__keywords === true) {
-        delete arg.__keywords;
-        for (const key in arg) {
-            arg[key] = evalArg(arg[key], evalFunc);
-        }
-        arg.__keywords = true;
-        return arg;
-    }
-    return evalFunc(arg);
+const parse = function (args, evalFunc) {
+    parser.eval = evalFunc.bind(this);
+    return parser.parse(args);
 }
 
-const parse = parser.parse.bind(parser);
+module.exports = parse;
 
-const evaluate = (args, evalFunc) => {
-    return args.map(a => evalArg(a, evalFunc));
-};
-
-module.exports = function (args, evalFunc) {
-    let parsed = parse(args);
-    if (evalFunc)
-        parsed = evaluate(args, evalFunc);
-    return parsed;
-};
-
-module.exports.shortcode = function (render) {
+module.exports.shortcode = function (renderFunc) {
     return {
         parse: function (tagToken) {
-            this.args = parse(tagToken.args);
+            this.args = tagToken.args;
         },
         render: function (ctx, emitter, hash) {
             const evalValue = arg => this.liquid.evalValueSync.call(this.liquid, arg, ctx);
-            this.args = evaluate(this.args, evalValue);
-            return render.call(this, ctx, emitter, hash);
+            this.args = parse(this.args, evalValue);
+            return renderFunc.call(this, ctx, emitter, hash);
         }
     }
-};
-
+}
