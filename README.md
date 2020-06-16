@@ -35,7 +35,7 @@ parser(`foo "bar" 42`, evalFunc);
 // [ fooValue, 'bar', 42 ]
 ```
 
-If the function is async or returns a Promise, then the parser will return a Promise that resolves to the evaluated arguments list.
+If the function is async or returns a Promise, then the parser will return an array of Promises, which each resolve to the corresponding evaluated argument (or keywords arg object).
 
 ## Example
 
@@ -51,9 +51,9 @@ engine.registerTag('jsonify', {
         this.args = tagToken.args;
     },
     render: async function (ctx, emitter, hash) {
-        const evalValue = arg => this.liquid.evalValue.call(this.liquid, arg, ctx);
-        this.args = await parser(this.args, evalValue);
-        return JSON.stringify(this.args);
+        const evalValue = arg => this.liquid.evalValue(arg, ctx);
+        this.args = parser(this.args, evalValue);
+        return JSON.stringify(await Promise.all(this.args));
     }
 });
 ```
