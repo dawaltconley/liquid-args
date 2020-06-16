@@ -2,9 +2,9 @@
     var evaluate = this.eval || function (arg) { return arg; };
 }
 
-Args = a:Kwargs { return [a] }
-    / a:Positional _ args:Args { return [a].concat(args) }
-    / a:Positional { return [a] }
+Args = a:Positional _ args:Args { return [a].concat(args) }
+    / a:( Kwargs / Positional ) { return [a] }
+    / '' { return [] }
 
 Kwargs = a:Keyword _ b:Kwargs {
     return { ...a, ...b };

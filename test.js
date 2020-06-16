@@ -9,6 +9,12 @@ const parser = require(p('index.js'));
 const tests = [
     {
         input: [
+            [ `{% test %}` ]
+        ],
+        output: '[]',
+    },
+    {
+        input: [
             [ `{% test 'foobar' %}` ],
             [ `{% test "foobar" %}` ],
             [ `{% assign str = 'foobar' %}{% test str %}` ],
