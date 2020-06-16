@@ -93,7 +93,7 @@ const sync = runTests('sync', {
         this.args = tagToken.args;
     },
     render: function (ctx) {
-        const evalValue = arg => this.liquid.evalValueSync.call(this.liquid, arg, ctx);
+        const evalValue = arg => this.liquid.evalValueSync(arg, ctx);
         this.args = parser(this.args, evalValue);
         return JSON.stringify(this.args);
     }
@@ -104,7 +104,7 @@ const async = runTests('async', {
         this.args = tagToken.args;
     },
     render: async function (ctx) {
-        const evalValue = arg => this.liquid.evalValue.call(this.liquid, arg, ctx);
+        const evalValue = arg => this.liquid.evalValue(arg, ctx);
         this.args = await Promise.all(parser(this.args, evalValue));
         return JSON.stringify(this.args);
     }
