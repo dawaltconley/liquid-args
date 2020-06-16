@@ -15,7 +15,7 @@ parser(`foo "bar" 42`);
 It supports key/value arguments, which it returns in an object as a last argument. The output mimics the standard arguments for custom Nunjucks tags.
 
 ```javascript
-parser(`first_name last_name age=68 height="5' 7\\\\""`);
+parser(`first_name last_name age=68 height="5' 7\\""`);
 
 // [ 'first_name',
 //   'last_name',
