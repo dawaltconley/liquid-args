@@ -3,23 +3,34 @@ const p = (...args) => path.join(__dirname, ...args);
 
 const parser = require(p('parser.js'));
 
-const parse = function (args, evalFunc) {
+module.exports = function (args, evalFunc) {
     if (evalFunc)
-        parser.eval = evalFunc.bind(this);
-    return parser.parse(args);
-}
+        parser.eval = evalFunc;
 
-module.exports = parse;
+    let results = parser.parse(args);
+    if (!results.length)
+        return results;
 
-module.exports.shortcode = function (renderFunc) {
-    return {
-        parse: function (tagToken) {
-            this.args = tagToken.args;
-        },
-        render: function (ctx, emitter, hash) {
-            const evalValue = arg => this.liquid.evalValueSync.call(this.liquid, arg, ctx);
-            this.args = parse(this.args, evalValue);
-            return renderFunc.call(this, ctx, emitter, hash);
-        }
+    let arg1 = results[0]
+
+    if (arg1 && arg1.__keywords === true)
+        arg1 = arg1[Object.keys(arg1).find(k => k !== '__keywords')];
+
+    if (arg1 instanceof Promise) {
+        results = results.map(arg => {
+            if (arg.__keywords === true) {
+                let asyncKwargs = Object.entries(arg).map(e => Promise.all(e));
+                return Promise.all(asyncKwargs)
+                    .then(kwargs =>
+                        kwargs.reduce((obj, [key, val]) => {
+                            obj[key] = val;
+                            return obj;
+                        }, {}));
+            }
+            return arg; // don't need to do this in a map. just find the kwargs if it exists
+        });
+        results = Promise.all(results);
     }
+
+    return results;
 }

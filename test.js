@@ -72,14 +72,14 @@ const tests = [
     },
 ];
 
-const runTests = (name, tagConfig) => {
+const runTests = async (name, tagConfig) => {
     const engine = new Liquid();
     engine.registerTag('test', tagConfig);
     for (const { input, output } of tests) {
         for (const i of input) {
-            const parse = engine.parseAndRenderSync.bind(engine, ...i);
             try {
-                assert.equal(parse(), output);
+                const parsed = await engine.parseAndRender(...i);
+                assert.equal(parsed, output);
             } catch (e) {
                 console.error(`Error while testing ${name}`);
                 throw e;
@@ -88,7 +88,7 @@ const runTests = (name, tagConfig) => {
     }
 }
 
-runTests('default', {
+const sync = runTests('sync', {
     parse: function (tagToken) {
         this.args = tagToken.args;
     },
@@ -99,8 +99,16 @@ runTests('default', {
     }
 });
 
-runTests('shortcode', parser.shortcode(function () {
-    return JSON.stringify(this.args);
-}));
+const async = runTests('async', {
+    parse: function (tagToken) {
+        this.args = tagToken.args;
+    },
+    render: async function (ctx) {
+        const evalValue = arg => this.liquid.evalValue.call(this.liquid, arg, ctx);
+        this.args = await parser(this.args, evalValue);
+        return JSON.stringify(this.args);
+    }
+});
 
-console.log('All tests passed.');
+Promise.all([ sync, async ])
+    .then(() => console.log('All tests passed.'));
