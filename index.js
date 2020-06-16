@@ -31,7 +31,6 @@ module.exports = function (args, evalFunc) {
                 break;
             }
         }
-        results = Promise.all(results);
     }
 
     return results;

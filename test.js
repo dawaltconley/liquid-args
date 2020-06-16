@@ -105,7 +105,7 @@ const async = runTests('async', {
     },
     render: async function (ctx) {
         const evalValue = arg => this.liquid.evalValue.call(this.liquid, arg, ctx);
-        this.args = await parser(this.args, evalValue);
+        this.args = await Promise.all(parser(this.args, evalValue));
         return JSON.stringify(this.args);
     }
 });
