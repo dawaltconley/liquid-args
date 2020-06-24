@@ -4,8 +4,8 @@
   "description": "A parser for custom tag arguments in liquidjs. Meant to mirror Nunjucks.",
   "main": "index.js",
   "files": [
-      "index.js",
-      "parser.js"
+    "/index.js",
+    "/parser.js"
   ],
   "scripts": {
     "build": "node build",
@@ -19,8 +19,8 @@
     "tags"
   ],
   "repository": {
-    "type" : "git",
-    "url" : "https://github.com/dawaltconley/liquid-args.git"
+    "type": "git",
+    "url": "https://github.com/dawaltconley/liquid-args.git"
   },
   "author": "Dylan Awalt-Conley",
   "license": "ISC",
