@@ -11,7 +11,7 @@ Kwargs = a:Keyword _ b:Kwargs {
 } / Keyword
 
 Keyword = key:VarName [=] value:Positional {
-    const obj = { __keywords: true };
+    var obj = { __keywords: true };
     obj[key] = value;
     return obj;
 }
