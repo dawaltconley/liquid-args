@@ -111,4 +111,5 @@ const async = runTests('async', {
 });
 
 Promise.all([ sync, async ])
-    .then(() => console.log('All tests passed.'));
+    .then(() => console.log('All tests passed.'))
+    .catch(e => console.error(e));
