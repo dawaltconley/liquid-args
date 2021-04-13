@@ -70,18 +70,99 @@ const tests = [
         ],
         output: `["foo","bar","baz",{"__keywords":true,"name":"O'Malley","age":68}]`
     },
+    {
+        input: [
+            [ `{% test 'foo' , 'bar' %}` ],
+            [ `{% test 'foo' ,'bar' %}` ],
+            [ `{% test 'foo',,,'bar' ,,'baz' %}` ],
+            [ `{% test 'foo''bar''baz' %}` ],
+        ],
+        error: {
+            name: 'RenderError',
+            originalError: {
+                name: 'SyntaxError',
+                message: /Expected \[, \\t\\n\\r\] .*/
+            }
+        }
+    },
+    {
+        input: [
+            [ `{% test 'foo', 4..38 %}` ],
+            [ `{% test n=3...95 %}` ],
+            [ `{% test .23 %}` ],
+            [ `{% test 928.. %}` ],
+        ],
+        error: {
+            name: 'RenderError',
+            originalError: {
+                name: 'SyntaxError',
+                message: /Expected .* but "\." found\./
+            }
+        }
+    },
+    {
+        input: [
+            [ `{% test .foo.bar.baz %}`, {foo:{name:'foo',bar:{baz:'baz'}}} ],
+            [ `{% test foo.bar foo.name.. %}`, {foo:{name:'foo',bar:{baz:'baz'}}} ],
+            [ `{% test name=foo.name baz=foo..bar.baz %}`, {foo:{name:'foo',bar:{baz:'baz'}}} ],
+        ],
+        error: {
+            name: 'RenderError',
+            originalError: {
+                name: 'SyntaxError',
+                message: /Expected .* but "\." found\./
+            }
+        }
+    },
+    {
+        input: [
+            [ `{% test f00/bar %}` ],
+            [ `{% test var~name %}` ],
+            [ `{% test invalid&chars %}` ],
+        ],
+        error: {
+            name: 'RenderError',
+            originalError: {
+                name: 'SyntaxError',
+                message: /Expected .* but "." found\./
+            }
+        }
+    },
+    {
+        input: [
+            [ `{% test name='O'Malley' %}` ],
+            [ `{% test name="O"Malley" %}` ],
+        ],
+        error: {
+            name: 'TokenizationError',
+            originalError: {
+                name: 'Error',
+                message: /tag .* not closed/
+            }
+        }
+    },
 ];
 
 const runTests = async (name, tagConfig) => {
     const engine = new Liquid();
     engine.registerTag('test', tagConfig);
-    for (const { input, output } of tests) {
+    for (const { input, output, error } of tests) {
         for (const i of input) {
             try {
-                const parsed = await engine.parseAndRender(...i);
-                assert.equal(parsed, output);
+                const parse = engine.parseAndRender.bind(engine, ...i);
+                if (error) {
+                    await assert.rejects(parse, e => {
+                        assert.equal(e.name, error.name);
+                        assert.equal(e.originalError.name, error.originalError.name);
+                        assert.match(e.originalError.message, error.originalError.message);
+                        return true;
+                    });
+                } else {
+                    const parsed = await parse();
+                    assert.equal(parsed, output);
+                }
             } catch (e) {
-                console.error(`Error while testing ${name}`);
+                console.error(`Error while testing ${name}, ${i}`);
                 throw e;
             }
         }
