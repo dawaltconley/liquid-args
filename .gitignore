@@ -1,4 +1,5 @@
 parser.js
+package-lock.json
 node_modules/
 dist/
 device-data/
