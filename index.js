@@ -1,6 +1,4 @@
-const path = require('path');
-const p = (...args) => path.join(__dirname, ...args);
-const parser = require(p('parser.js'));
+const parser = require('./parser.js');
 
 function promisifyKwargs (kwargs) {
     const asyncKwargs = Object.entries(kwargs).map(e => Promise.all(e));
