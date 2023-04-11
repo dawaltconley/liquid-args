@@ -11,3 +11,10 @@ parserOptions:
   ecmaVersion: 11
 rules:
   no-unused-vars: 1
+
+overrides:
+  - files: ['index.d.ts']
+    parser:
+      - '@typescript-eslint/parser'
+    plugins:
+      - '@typescript-eslint'

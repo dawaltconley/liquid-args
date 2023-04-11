@@ -57,3 +57,23 @@ engine.registerTag('jsonify', {
     }
 });
 ```
+
+### TypeScript 
+
+When using TypeScript, the parser optionally accepts two generics, one defining positional arguments and another defining an object of keyword arguments.
+
+```typescript
+import parser from 'liquid-args';
+
+let args: string[] = parser(`foo "bar" 42`);
+
+let kwargs = parser<[string, string], { age: string, height: string }>(
+  `first_name last_name age=68 height="5' 7\\""`
+);
+
+// pass a function if you want to specify non-string return types
+let evaluated = parser<[], { age: number, height: string }>(
+  `age=68 height="5' 7\\""`,
+  (arg: string) => Number(arg) || arg
+);
+```
