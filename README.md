@@ -1,6 +1,6 @@
 # Liquid Arguments Parser
 
-This module exists to parse the arguments string of a [custom Liquid JS tag](https://liquidjs.com/tutorials/register-filters-tags.html). 
+This module exists to parse the arguments string of a [custom Liquid JS tag](https://liquidjs.com/tutorials/register-filters-tags.html), though it does not depend on `liquidjs` and could also be used in other contexts.
 
 ## Basic Usage
 
