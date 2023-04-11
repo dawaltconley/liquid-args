@@ -81,7 +81,7 @@ const tests = [
             name: 'RenderError',
             originalError: {
                 name: 'SyntaxError',
-                message: /Expected \[, \\t\\n\\r\] .*/
+                message: /Expected \[,, ,\\t,\\n,\\r\] .*/
             }
         }
     },
